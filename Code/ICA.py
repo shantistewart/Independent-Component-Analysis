@@ -103,7 +103,7 @@ def fastICA(X, num_sources=None, num_iters=100):
 
 # Function description: recovers sources with unmixing matrix.
 # Inputs:
-#   X = (un-centered) raw data
+#   X = whitened data
 #       size: (num_sig, num_samples)
 #   W = unmixing matrix
 #       size: (num_sig, num_sources)

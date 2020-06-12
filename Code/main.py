@@ -115,6 +115,6 @@ play_obj.wait_done()
 
 
 # display plots:
-# plotter.show()
+plotter.show()
 
 print("\n\nDone!\n")
