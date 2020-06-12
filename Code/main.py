@@ -2,6 +2,7 @@
 
 
 import numpy as np
+import matplotlib.pyplot as plotter
 import scipy.io.wavfile
 import simpleaudio as sa
 
