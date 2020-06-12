@@ -24,7 +24,7 @@ def center(X):
 #   X = (centered) data
 #       size: (num_sig, num_samples)
 # Outputs:
-#   X_whiten = whitened data
+#   X_white = whitened data
 #       size: (num_sig, num_samples)
 def whiten(X):
     num_sig = X.shape[0]
@@ -58,9 +58,9 @@ def whiten(X):
     # print("\n")
 
     # whiten data:
-    X_whiten = np.matmul(np.matmul(D_sqrt_inv, np.transpose(E)), X)
+    X_white = np.matmul(np.matmul(D_sqrt_inv, np.transpose(E)), X)
 
-    return X_whiten
+    return X_white
 
 
 # Function description: implements the FastICA algorithm.
@@ -103,14 +103,26 @@ def fastICA(X, num_sources=None, num_iters=100):
 
 # Function description: recovers sources with unmixing matrix.
 # Inputs:
-#   X = whitened data
+#   X_white = whitened data
 #       size: (num_sig, num_samples)
 #   W = unmixing matrix
 #       size: (num_sig, num_sources)
+#   X = un-centered raw data
+#       size: (num_sig, num_samples)
 # Outputs:
 #   S = sources
 #       size: (num_sources, num_samples)
-def recover_sources(X, W):
-    S = np.matmul(W.T, X)
+def recover_sources(X_white, W, X):
+    num_sources = W.shape[1]
+
+    # project whitened data onto independent components:
+    S = np.matmul(W.T, X_white)
+
+    # estimate the mean and standard deviation of the sources:
+    S_mean = np.matmul(W.T, np.mean(X, axis=1, keepdims=True))
+    S_std = np.matmul(W.T, np.std(X, axis=1, keepdims=True))
+
+    # add the mean and standard deviation of the sources back in:
+    S = S_std * S + S_mean
 
     return S

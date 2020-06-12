@@ -60,24 +60,24 @@ X_center = ICA.center(X)
 # plotting.plot_signals(X_center, sample_freq_1)
 
 # whiten data:
-X_whiten = ICA.whiten(X_center)
-print("\nSize of X_whiten: ", X_whiten.shape)
+X_white = ICA.whiten(X_center)
+print("\nSize of X_whiten: ", X_white.shape)
 # print("Mean of whitened data:")
-# print(np.mean(X_whiten, axis=1))
+# print(np.mean(X_white, axis=1))
 # print("Variance of whitened data:")
-# print(np.var(X_whiten, axis=1))
+# print(np.var(X_white, axis=1))
 # plot whitened signals:
-# plotting.plot_signals(X_whiten, sample_freq_1)
+# plotting.plot_signals(X_white, sample_freq_1)
 # create a scatter plot of whitened signals:
-# plotting.scatter_plot_signals(X_whiten)
+# plotting.scatter_plot_signals(X_white)
 
 # run FastICA algorithm:
-W = ICA.fastICA(X_whiten, num_sources=num_sig, num_iters=num_iters)
+W = ICA.fastICA(X_white, num_sources=num_sig, num_iters=num_iters)
 print("\nSize of W: ", W.shape)
 print(W)
 
 # recover source signals:
-S = ICA.recover_sources(X_whiten, W)
+S = ICA.recover_sources(X_white, W, X)
 print("\nSize of S: ", S.shape)
 # plot estimated source signals:
 plotting.plot_signals(S, sample_freq_1)
@@ -103,6 +103,7 @@ print("\n")
 write(file_s1, sample_freq_1, S[0].astype(np.int16))
 write(file_s2, sample_freq_2, S[1].astype(np.int16))
 
+# """
 # play audio files:
 print("Playing", file_s1, "...")
 wave_obj = sa.WaveObject.from_wave_file(file_s1)
@@ -112,6 +113,7 @@ print("Playing", file_s2, "...")
 wave_obj = sa.WaveObject.from_wave_file(file_s2)
 play_obj = wave_obj.play()
 play_obj.wait_done()
+# """
 
 
 # display plots:
