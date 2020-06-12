@@ -3,29 +3,35 @@
 
 import numpy as np
 import matplotlib.pyplot as plotter
-import scipy.io.wavfile
+from scipy.io.wavfile import read
+from scipy.io.wavfile import write
 from sklearn.decomposition import FastICA
+import simpleaudio as sa
 from Code import ICA, plotting_functions as plotting
 
 print("\n")
 
 # audio file names:
-file_1 = 'microphone_1.wav'
-file_2 = 'microphone_2.wav'
+file_x1 = 'microphone_1.wav'
+file_x2 = 'microphone_2.wav'
+file_s1 = "source_1.wav"
+file_s2 = "source_2.wav"
 
 """
 # play audio files:
-wave_obj = sa.WaveObject.from_wave_file(file_1)
+print("Playing", file_x1, "...")
+wave_obj = sa.WaveObject.from_wave_file(file_x1)
 play_obj = wave_obj.play()
 play_obj.wait_done()
-wave_obj = sa.WaveObject.from_wave_file(file_2)
+print("Playing", file_x2, "...")
+wave_obj = sa.WaveObject.from_wave_file(file_x2)
 play_obj = wave_obj.play()
 play_obj.wait_done()
 """
 
 # load audio files:
-sample_freq_1, x1 = scipy.io.wavfile.read(file_1)
-sample_freq_2, x2 = scipy.io.wavfile.read(file_2)
+sample_freq_1, x1 = read(file_x1)
+sample_freq_2, x2 = read(file_x2)
 num_samples = x1.shape[0]
 # print("Size of x1: ", x1.shape)
 # print("Size of x2: ", x2.shape)
@@ -60,7 +66,6 @@ print("\nSize of X_whiten: ", X_whiten.shape)
 # print(np.mean(X_whiten, axis=1))
 # print("Variance of whitened data:")
 # print(np.var(X_whiten, axis=1))
-# print()
 # plot whitened signals:
 # plotting.plot_signals(X_whiten, sample_freq_1)
 # create a scatter plot of whitened signals:
@@ -89,7 +94,27 @@ plotting.plot_signals(S, sample_freq_1)
 plotting.scatter_plot_signals(S)
 """
 
+print("\n")
 
-plotter.show()
+
+# --------------------PLAYING RESULTS--------------------
+
+# convert source numpy arrays to .WAV files:
+write(file_s1, sample_freq_1, S[0].astype(np.int16))
+write(file_s2, sample_freq_2, S[1].astype(np.int16))
+
+# play audio files:
+print("Playing", file_s1, "...")
+wave_obj = sa.WaveObject.from_wave_file(file_s1)
+play_obj = wave_obj.play()
+play_obj.wait_done()
+print("Playing", file_s2, "...")
+wave_obj = sa.WaveObject.from_wave_file(file_s2)
+play_obj = wave_obj.play()
+play_obj.wait_done()
+
+
+# display plots:
+# plotter.show()
 
 print("\n\nDone!\n")
