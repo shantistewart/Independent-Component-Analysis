@@ -4,7 +4,7 @@
 import numpy as np
 import matplotlib.pyplot as plotter
 import scipy.io.wavfile
-from Code import plotting_functions as plotting
+from Code import fastICA, plotting_functions as plotting
 
 print("\n")
 
@@ -43,5 +43,13 @@ print(X.shape)
 plotting.plot_signals(X, sample_freq_1)
 # create a scatter plot of raw audio signals:
 plotting.scatter_plot_signals(X)
+
+
+# --------------------ICA ALGORITHM--------------------
+
+# center data:
+X = fastICA.center(X)
+# plotting.plot_signals(X, sample_freq_1)
+
 
 plotter.show()
