@@ -9,13 +9,14 @@ from sklearn.decomposition import FastICA
 import simpleaudio as sa
 from Code import ICA, plotting_functions as plotting
 
+
 print("\n")
 
 # audio file names:
-file_x1 = 'microphone_1.wav'
-file_x2 = 'microphone_2.wav'
-file_s1 = "source_1.wav"
-file_s2 = "source_2.wav"
+file_x1 = 'speech_x1.wav'
+file_x2 = 'speech_x2.wav'
+file_s1 = "speech_s1.wav"
+file_s2 = "speech_s2.wav"
 
 """
 # play audio files:
