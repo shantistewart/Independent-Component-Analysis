@@ -119,8 +119,8 @@ def recover_sources(X_white, W, X):
     S = np.matmul(W.T, X_white)
 
     # estimate the mean and standard deviation of the sources:
-    S_mean = np.matmul(W.T, np.mean(X, axis=1, keepdims=True))
-    S_std = np.matmul(W.T, np.std(X, axis=1, keepdims=True))
+    S_mean = np.matmul(W, np.mean(X, axis=1, keepdims=True))
+    S_std = np.matmul(W, np.std(X, axis=1, keepdims=True))
 
     # add the mean and standard deviation of the sources back in:
     S = S_std * S + S_mean
