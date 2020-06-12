@@ -10,7 +10,7 @@ import numpy.linalg as linalg
 #   X = (un-centered) data
 #       size: (num_sig, num_samples)
 # Outputs:
-#   X = (centered) data
+#   X = centered data
 #       size: (num_sig, num_samples)
 def center(X):
     # center data:
@@ -24,6 +24,8 @@ def center(X):
 #   X = (centered) data
 #       size: (num_sig, num_samples)
 # Outputs:
+#   X = whitened data
+#       size: (num_sig, num_samples)
 def whiten(X):
     num_sig = X.shape[0]
 
