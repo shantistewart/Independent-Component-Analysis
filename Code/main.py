@@ -40,6 +40,8 @@ print("Size of X: ", end="")
 print(X.shape)
 
 # plot raw audio signals:
-plotting.plot_raw_signals(X, sample_freq_1)
+plotting.plot_signals(X, sample_freq_1)
+# create a scatter plot of raw audio signals:
+plotting.scatter_plot_signals(X)
 
 plotter.show()
