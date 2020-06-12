@@ -60,7 +60,7 @@ num_iters = 200
 X_center = ICA.center(X)
 
 # whiten data:
-X_white = ICA.whiten(X_center)
+X_white, whiten_filter = ICA.whiten(X_center)
 # print("\nSize of X_whiten: ", X_white.shape)
 # print("Mean of whitened data:")
 # print(np.mean(X_white, axis=1))
@@ -72,12 +72,12 @@ X_white = ICA.whiten(X_center)
 # plotting.scatter_plot_signals(X_white)
 
 # run FastICA algorithm:
-W = ICA.fastICA(X_white, num_sources=num_sig, num_iters=num_iters)
-print("\nW: ")
-print(W)
+V = ICA.fastICA(X_white, num_sources=num_sig, num_iters=num_iters)
+print("\nV: ")
+print(V)
 
 # recover source signals:
-S = ICA.recover_sources(X_white, W, X)
+S = ICA.recover_sources(X_white, V, X, whiten_filter)
 # print("\nSize of S: ", S.shape)
 # plot estimated source signals:
 plotting.plot_signals(S, sample_freq_1)
