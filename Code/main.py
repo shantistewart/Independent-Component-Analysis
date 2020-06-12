@@ -4,7 +4,7 @@
 import numpy as np
 import matplotlib.pyplot as plotter
 import scipy.io.wavfile
-from Code import fastICA, plotting_functions as plotting
+from Code import ICA, plotting_functions as plotting
 
 print("\n")
 
@@ -48,12 +48,12 @@ plotting.scatter_plot_signals(X)
 # --------------------ICA ALGORITHM--------------------
 
 # center data:
-X = fastICA.center(X)
+X = ICA.center(X)
 # plotting.plot_signals(X, sample_freq_1)
 
 # whiten data:
 print("")
-X_whiten = fastICA.whiten(X)
+X_whiten = ICA.whiten(X)
 print("Size of X_whiten: ", end="")
 print(X_whiten.shape)
 # print("Mean of whitened data:")
