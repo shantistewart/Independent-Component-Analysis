@@ -19,7 +19,7 @@ def plot_raw_signals(X, sample_freq):
     plotter.subplots_adjust(hspace=1)
 
     for i in range(num_sig):
-        axes[i, 0].set_title('Original Signal x{0}(t)'.format(i+1))
-        axes[i, 0].plot(time, X[i])
-        axes[i, 0].set_xlabel('Time (s)')
-        axes[i, 0].set_ylabel('x{0}(t)'.format(i+1))
+        axes[i].set_title('Original Signal x{0}(t)'.format(i+1))
+        axes[i].plot(time, X[i])
+        axes[i].set_xlabel('Time (s)')
+        axes[i].set_ylabel('x{0}(t)'.format(i+1))

@@ -5,6 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plotter
 import scipy.io.wavfile
 import simpleaudio as sa
+from Code.plotting import plotting_functions as plotting
 
 
 print("\n")
@@ -39,3 +40,8 @@ X[0] = x1
 X[1] = x2
 print("Size of X: ", end="")
 print(X.shape)
+
+# plot raw audio signals:
+plotting.plot_raw_signals(X, sample_freq_1)
+
+plotter.show()
