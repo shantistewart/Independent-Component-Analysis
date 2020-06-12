@@ -27,7 +27,7 @@ stewars2@oregonstate.edu}
 
 \begin{abstract}
 This document is a model and instructions for \LaTeX.
-This and the IEEEtran.cls file define the components of your paper [title, text, heads, etc.]. *CRITICAL: Do Not Use Symbols, Special Characters, Footnotes, 
+This and the IEEEtran.cls file define the components of your paper [title, text, heads, etc.]. *CRITICAL: Do Not Use Symbols, Special Characters, Footnotes,
 or Math in Paper Title or Abstract.
 \end{abstract}
 
@@ -70,41 +70,102 @@ The basic setup of ICA is the following. Let $ \boldsymbol{x} $ be an $ n $-dime
 
 There are two key assumptions behind the theory of ICA: 1) each source $ s_i $ is \textit{statistically independent} from the other sources and 2) the observed data is a \textit{linear mixture} of the sources. Both assumption are reasonable approximations to the underlying physical model in many cases. The linear mixture model can be written as:
 \begin{equation}
-\boldsymbol{x} = \boldsymbol{A}\boldsymbol{s}
+\boldsymbol{x} = \boldsymbol{As}
 \label{linear_mixture}
 \end{equation}
 where $ \boldsymbol{A} \in \mathbb{R}^{n \times n}$ is an unknown square matrix that "mixes" the sources. $ \boldsymbol{A} $ is known as the \textit{mixing matrix}. In this section, $ \boldsymbol{A} $ is assumed to be nonsingular.
 
-The goal of ICA is to determine an \textit{unmixing} matrix $ \boldsymbol{W} \approx \boldsymbol{A^{-1}} $, which is an approximation of the inverse of $ \boldsymbol{A} $. The \textit{unmixing} matrix can then be used to estimate the sources:
+The goal of ICA is to determine an \textit{unmixing} matrix $ \boldsymbol{W} \approx \boldsymbol{A^{-1}} $, which is an approximation of the inverse of $ \boldsymbol{A} $. The unmixing matrix can then be used to estimate the sources:
 \begin{equation}
-\boldsymbol{\hat{s}} = \boldsymbol{W}\boldsymbol{x} \label{source_estimation}
+\boldsymbol{\hat{s}} = \boldsymbol{Wx}
+\label{source_estimation}
 \end{equation}
 such that $ \boldsymbol{\hat{s}} \approx \boldsymbol{s} $.
 
 \subsection{Initial Strategy}
 
-To solve for the \textit{unmixing} matrix $ \boldsymbol{W} $, we first decompose $ \boldsymbol{A} $ by singular value decomposition (SVD):
+To solve for the unmixing matrix $ \boldsymbol{W} $, we first decompose $ \boldsymbol{A} $ by singular value decomposition (SVD):
 \begin{equation}
-\boldsymbol{A} = \boldsymbol{U}\boldsymbol{\Sigma}\boldsymbol{V^T}
+\boldsymbol{A} = \boldsymbol{U \Sigma V^T}
 \label{A_SVD}
 \end{equation}
 where $ \boldsymbol{U} \in \mathbb{R}^{n \times n}$ and $ \boldsymbol{V} \in \mathbb{R}^{n \times n} $ are orthogonal matrices, and $ \boldsymbol{\Sigma} \in \mathbb{R}^{n \times n} $ is a diagonal matrix of singular values. Since $ \boldsymbol{A} $ is nonsingular and therefore full-rank, $ \boldsymbol{A} $ has $ n $ nonzero singular values and $ \boldsymbol{\Sigma} $ consequently is also full-rank and nonsingular. Using the SVD of $ \boldsymbol{A} $, $ \boldsymbol{W} $ can be written as:
 \[
 \boldsymbol{W} = \boldsymbol{A^{-1}} = (
-\boldsymbol{U}\boldsymbol{\Sigma}\boldsymbol{V^T})^{-1}
+\boldsymbol{U \Sigma V^T})^{-1}
 \]
 \begin{equation}
-\boldsymbol{W} = \boldsymbol{V}\boldsymbol{\Sigma^{-1}}\boldsymbol{U^T}
+\boldsymbol{W} = \boldsymbol{V \Sigma^{-1} U^T}
 \label{W_SVD}
 \end{equation}
 where the expression was simplified with the fact that the inverse of an orthogonal matrix is its transpose.
 
-The \textit{unmixing} matrix $ \boldsymbol{W} $ has been decomposed into three pieces, and we can now focus on determining each of these parts separately.
+The unmixing matrix $ \boldsymbol{W} $ has been decomposed into three pieces, and we can now focus on determining each of these parts separately.
 
 \subsection{Whitening}
 
+This subsection explains how to solve for two out of three components of the unmixing matrix $ \boldsymbol{W} $: namely, $ \boldsymbol{\Sigma^{-1}} $ and $ \boldsymbol{U^T} $.
 
-\section{Methods}
+\subsubsection{Covariance of Data}
+
+Inspecting the covariance of the data (specifically, the auto-covariance matrix) is a logical place to start, because the covariance contains all (linear) correlations in the data, which is appropriate given that ICA is built upon a linear mixture model. Before computing the covariance, the data is centered:
+\begin{equation}
+\boldsymbol{x} \leftarrow \boldsymbol{x} - \overline{\boldsymbol{x}}
+\label{centering}
+\end{equation}
+where $ \overline{\boldsymbol{x}} $ is the sample mean of $ \boldsymbol{x} $.
+
+In order to determine $ \boldsymbol{\Sigma^{-1}} $ and $ \boldsymbol{U^T} $, we have to make an additional assumption that the sources $ \boldsymbol{s} $ are \textit{whitened}: $ \langle \boldsymbol{ss^T} \rangle = \boldsymbol{I} $. With this assumption, the ICA linear mixture model $ \boldsymbol{x} = \boldsymbol{As} $, and the SVD $ \boldsymbol{A} = \boldsymbol{U \Sigma V^T} $ the covariance matrix of $ \boldsymbol{x} $ can be expressed as:
+\[
+\langle \boldsymbol{xx^T} \rangle = \langle (\boldsymbol{As}) (\boldsymbol{As})^{\boldsymbol{T}} \rangle
+\]
+\[
+\langle \boldsymbol{xx^T} \rangle = \langle (\boldsymbol{U \Sigma V^T s}) (\boldsymbol{U \Sigma V^T s})^{\boldsymbol{T}} \rangle
+\]
+\[
+\langle \boldsymbol{xx^T} \rangle = \langle (\boldsymbol{U \Sigma V^T s}) (\boldsymbol{s^T V \Sigma U^T}) \rangle
+\]
+\[
+\langle \boldsymbol{xx^T} \rangle = \boldsymbol{U \Sigma V^T} \langle \boldsymbol{ss^T} \rangle  \boldsymbol{V \Sigma U^T}
+\langle \boldsymbol{xx^T} \rangle
+\]\[
+\langle \boldsymbol{xx^T} \rangle = \boldsymbol{U \Sigma V^T} \boldsymbol{V \Sigma U^T}
+\]
+\begin{equation}
+\langle \boldsymbol{xx^T} \rangle = \boldsymbol{U \Sigma^2 U^T}
+\label{covariance}
+\end{equation}
+utilizing the fact that the inverse of an orthogonal matrix is its transpose. By using the assumption that the sources are whitened, the covariance of the data can be expressed independently from the sources $ \boldsymbol{s} $ and the SVD matrix $ \boldsymbol{V} $.
+
+\subsubsection{Eigendecomposition of the Covariance}
+
+In order to solve for $ \boldsymbol{\Sigma^{-1}} $ and $ \boldsymbol{U^T} $, we must take the eigendecomposition of the covariance matrix. Since all covariance matrices (for real-valued vectors) are real-symmetric, $ \boldsymbol{xx^T} $ must admit an eigendecomposition with orthonormal eigenvectors (also known as \textit{orthogonal diagonalization}):
+\begin{equation}
+\langle \boldsymbol{xx^T} \rangle = \boldsymbol{E D E^T}
+\label{eigendecomposition}
+\end{equation}
+Since all covariance matrices are positive semi-definite (PSD), all of the eigenvalues of $ \langle \boldsymbol{xx^T} \rangle $ are nonnegative. Furthermore, all covariance matrices of uncorrelated random vectors are positive definite (PD), and consequently all of their eigenvalues are positive. Thus, $ \langle \boldsymbol{xx^T} \rangle $ has all positive eigenvalues and $ \boldsymbol{D} $ is therefore nonsingular.
+
+Considering \eqref{covariance} and \eqref{eigendecomposition}, both equations show an orthogonal diagonalization of the covariance matrix of the data. Since diagonalizing a real-symmetric matrix with its eigenvectors is unique up to a permutation, the right hand sides of the two equations can be readily compared:
+\begin{equation}
+\boldsymbol{U} = \boldsymbol{E} \text{  and  } \boldsymbol{\Sigma} = \boldsymbol{D^{1/2}}
+\label{U_Sigma_expressions}
+\end{equation}
+
+Looking back at \eqref{W_SVD}, the unmixing matrix $ \boldsymbol{W} $ can now be written as:
+\begin{equation}
+\boldsymbol{W} = \boldsymbol{V D^{-1/2} E^T}
+\label{W_expression}
+\end{equation}
+where $ \boldsymbol{D} $ and $ \boldsymbol{E} $ are the eigenvalues and eigenvectors of the covariance matrix of the data, respectively. The matrix product $ \boldsymbol{D^{-1/2}E^T} $ is known as a \textit{whitening filter}, because it \textit{whitens} the data. Now the only unknown component of the unmixing matrix $ \boldsymbol{W} $ is an orthogonal matrix $ \boldsymbol{V} $, which is addressed in the upcoming subsections.
+
+\subsection{Measures of Statistical Independence}
+
+
+\section{FastICA Algorithm}
+
+The FastICA algorithm, developed by \textit{A. Hyvarinen} \cite{FastICA} at the Helsinki University of Technology, is a widely used algorithm for solving ICA with good efficiency and convergence properties. As with most ICA algorithms, FastICA searches for an orthogonal rotation matrix ($ \boldsymbol{V} $), such that non-gaussianity of the projection of the whitened data onto this matrix is maximized. FastICA uses an approximation of negentropy to as a measure of non-gaussianity.
+
 
 
 \section{Application: Audio Source Separation}
@@ -113,27 +174,27 @@ The \textit{unmixing} matrix $ \boldsymbol{W} $ has been decomposed into three p
 \section{Ease of Use}
 
 \subsection{Equations}
-Number equations consecutively. To make your 
-equations more compact, you may use the solidus (~/~), the exp function, or 
-appropriate exponents. Italicize Roman symbols for quantities and variables, 
-but not Greek symbols. Use a long dash rather than a hyphen for a minus 
-sign. Punctuate equations with commas or periods when they are part of a 
+Number equations consecutively. To make your
+equations more compact, you may use the solidus (~/~), the exp function, or
+appropriate exponents. Italicize Roman symbols for quantities and variables,
+but not Greek symbols. Use a long dash rather than a hyphen for a minus
+sign. Punctuate equations with commas or periods when they are part of a
 sentence, as in:
 \begin{equation}
 a+b=\gamma\label{eq}
 \end{equation}
 
-Be sure that the 
-symbols in your equation have been defined before or immediately following 
-the equation. Use ``\eqref{eq}'', not ``Eq.~\eqref{eq}'' or ``equation \eqref{eq}'', except at 
+Be sure that the
+symbols in your equation have been defined before or immediately following
+the equation. Use ``\eqref{eq}'', not ``Eq.~\eqref{eq}'' or ``equation \eqref{eq}'', except at
 the beginning of a sentence: ``Equation \eqref{eq} is . . .''
 
 \subsection{Figures and Tables}
-\paragraph{Positioning Figures and Tables} Place figures and tables at the top and 
-bottom of columns. Avoid placing them in the middle of columns. Large 
-figures and tables may span across both columns. Figure captions should be 
-below the figures; table heads should appear above the tables. Insert 
-figures and tables after they are cited in the text. Use the abbreviation 
+\paragraph{Positioning Figures and Tables} Place figures and tables at the top and
+bottom of columns. Avoid placing them in the middle of columns. Large
+figures and tables may span across both columns. Figure captions should be
+below the figures; table heads should appear above the tables. Insert
+figures and tables after they are cited in the text. Use the abbreviation
 ``Fig.~\ref{fig}'', even at the beginning of a sentence.
 
 \begin{table}[htbp]
@@ -142,7 +203,7 @@ figures and tables after they are cited in the text. Use the abbreviation
 \begin{tabular}{|c|c|c|c|}
 \hline
 \textbf{Table}&\multicolumn{3}{|c|}{\textbf{Table Column Head}} \\
-\cline{2-4} 
+\cline{2-4}
 \textbf{Head} & \textbf{\textit{Table column subhead}}& \textbf{\textit{Subhead}}& \textbf{\textit{Subhead}} \\
 \hline
 copy& More table copy$^{\mathrm{a}}$& &  \\
@@ -156,28 +217,31 @@ copy& More table copy$^{\mathrm{a}}$& &  \\
 
 \section*{References}
 
-Please number citations consecutively within brackets \cite{b1}. The 
-sentence punctuation follows the bracket \cite{b2}. Refer simply to the reference 
-number, as in \cite{b3}---do not use ``Ref. \cite{b3}'' or ``reference \cite{b3}'' except at 
+Please number citations consecutively within brackets \cite{b1}. The
+sentence punctuation follows the bracket \cite{b2}. Refer simply to the reference
+number, as in \cite{b3}---do not use ``Ref. \cite{b3}'' or ``reference \cite{b3}'' except at
 the beginning of a sentence: ``Reference \cite{b3} was the first $\ldots$''
 
-Number footnotes separately in superscripts. Place the actual footnote at 
-the bottom of the column in which it was cited. Do not put footnotes in the 
+Number footnotes separately in superscripts. Place the actual footnote at
+the bottom of the column in which it was cited. Do not put footnotes in the
 abstract or reference list. Use letters for table footnotes.
 
-Unless there are six authors or more give all authors' names; do not use 
-``et al.''. Papers that have not been published, even if they have been 
-submitted for publication, should be cited as ``unpublished'' \cite{b4}. Papers 
-that have been accepted for publication should be cited as ``in press'' \cite{b5}. 
-Capitalize only the first word in a paper title, except for proper nouns and 
+Unless there are six authors or more give all authors' names; do not use
+``et al.''. Papers that have not been published, even if they have been
+submitted for publication, should be cited as ``unpublished'' \cite{b4}. Papers
+that have been accepted for publication should be cited as ``in press'' \cite{b5}.
+Capitalize only the first word in a paper title, except for proper nouns and
 element symbols.
 
-For papers published in translation journals, please give the English 
+For papers published in translation journals, please give the English
 citation first, followed by the original foreign-language citation \cite{b6}.
 
 \begin{thebibliography}{00}
-\bibitem{b1} A. Hyvärinen and E. Oja, “Independent Component Analysis: Algorithms and Applications,” Neural Networks, vol. 13, no. 4-5, pp. 411–430, 2000.
-\bibitem{b2} J. Shlens, “A Tutorial on Independent Component Analysis,” arxiv, 14-Apr-2014. [Online]. Available: https://arxiv.org/pdf/1404.2986.pdf.
+
+\bibitem{ICA_algorithms} A. Hyvärinen and E. Oja, “Independent Component Analysis: Algorithms and Applications,” Neural Networks, vol. 13, no. 4-5, pp. 411–430, 2000.
+\bibitem{FastICA} A. Hyvarinen, “Fast and Robust Fixed-Point Algorithms for Independent Component Analysis,” IEEE Transactions on Neural Networks, vol. 10, no. 3, pp. 626–634, 1999.
+\bibitem{ICA_tutorial} J. Shlens, “A Tutorial on Independent Component Analysis,” arxiv, 14-Apr-2014. [Online]. Available: https://arxiv.org/pdf/1404.2986.pdf.
+
 \end{thebibliography}
 
 \end{document}
