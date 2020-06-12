@@ -4,9 +4,7 @@
 import numpy as np
 import matplotlib.pyplot as plotter
 import scipy.io.wavfile
-import simpleaudio as sa
-from Code.plotting import plotting_functions as plotting
-
+from Code import plotting_functions as plotting
 
 print("\n")
 
