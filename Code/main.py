@@ -26,17 +26,18 @@ play_obj.wait_done()
 sample_freq_1, x1 = scipy.io.wavfile.read(file_1)
 sample_freq_2, x2 = scipy.io.wavfile.read(file_2)
 num_samples = x1.shape[0]
-print("Size of x1: ", end="")
-print(x1.shape)
-print("Size of x2: ", end="")
-print(x2.shape)
-print("Sampling frequencies of audio files: {0}, {1}\n".format(sample_freq_1, sample_freq_2))
+# print("Size of x1: ", end="")
+# print(x1.shape)
+# print("Size of x2: ", end="")
+# print(x2.shape)
+# print("Sampling frequencies of audio files: {0}, {1}\n".format(sample_freq_1, sample_freq_2))
 
 # concatenate audio files into a 2D array:
 X = np.zeros((2, num_samples))
 X[0] = x1
 X[1] = x2
-print("Size of X: ", end="")
+num_sig = X.shape[0]
+print("\nSize of X: ", end="")
 print(X.shape)
 
 # plot raw audio signals:
@@ -47,14 +48,16 @@ plotting.scatter_plot_signals(X)
 
 # --------------------ICA ALGORITHM--------------------
 
+# number of iterations to run FastICA:
+num_iters = 1
+
 # center data:
 X = ICA.center(X)
 # plotting.plot_signals(X, sample_freq_1)
 
 # whiten data:
-print("")
 X_whiten = ICA.whiten(X)
-print("Size of X_whiten: ", end="")
+print("\nSize of X_whiten: ", end="")
 print(X_whiten.shape)
 # print("Mean of whitened data:")
 # print(np.mean(X_whiten, axis=1))
@@ -66,5 +69,11 @@ plotting.plot_signals(X_whiten, sample_freq_1)
 # create a scatter plot of whitened signals:
 plotting.scatter_plot_signals(X_whiten)
 
+# run FastICA algorithm:
+print("")
+W = ICA.fastICA(X, num_sources=num_sig, num_iters=num_iters)
+
 
 # plotter.show()
+
+print("\n\nDone!\n")

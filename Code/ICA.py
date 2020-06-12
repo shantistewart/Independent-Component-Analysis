@@ -1,4 +1,4 @@
-# This file contains functions to implement the fastICA algorithm.
+# This file contains functions to implement the FastICA algorithm.
 
 
 import numpy as np
@@ -59,3 +59,43 @@ def whiten(X):
     X_whiten = np.matmul(np.matmul(D_sqrt_inv, np.transpose(E)), X)
 
     return X_whiten
+
+
+# Function description: implements the FastICA algorithm.
+# Inputs:
+#   X = whitened data
+#       size: (num_sig, num_samples)
+#   num_sources = number of desired sources
+#   num_iters = number of iterations to run algorithm
+# Outputs:
+#   W = unmixing matrix
+#       size: (num_sig, num_sources)
+def fastICA(X, num_sources=None, num_iters=100):
+    # dimensions of X:
+    num_sig = X.shape[0]
+    num_samples = X.shape[1]
+
+    # default number of sources to number of observed signals:
+    if num_sources is None:
+        num_sources = num_sig
+
+    # unmixing matrix:
+    W = np.zeros((num_sig, num_sources))
+
+    for source in range(num_sources):
+        print("source {0}:".format(source))
+        # randomly initialize weight vector:
+        w = np.random.randn(num_sig, 1)
+
+        for _ in range(num_iters):
+            w = (1 / num_samples) * np.matmul(X, np.tanh(np.matmul(w.T, X)).T) -\
+                (1 / num_samples) * np.sum((1 - np.square(np.tanh(np.matmul(w.T, X))))) * w
+            for k in range(source):
+                print("k = {0}".format(k))
+                w = w - np.dot(np.squeeze(w), W[:, k]) * np.reshape(W[:, k], (num_sig, 1))
+            w = w / linalg.norm(w)
+
+        # save w:
+        W[:, source] = np.squeeze(w)
+
+    return W
