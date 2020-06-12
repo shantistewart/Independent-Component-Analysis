@@ -51,5 +51,18 @@ plotting.scatter_plot_signals(X)
 X = fastICA.center(X)
 # plotting.plot_signals(X, sample_freq_1)
 
+# whiten data:
+print("")
+X_whiten = fastICA.whiten(X)
+print("Size of X_whiten: ", end="")
+print(X_whiten.shape)
+# print("Mean of whitened data:")
+# print(np.mean(X_whiten, axis=1))
+# print("Variance of whitened data:")
+# print(np.var(X_whiten, axis=1))
+# print()
+# create a scatter plot of whitened signals:
+plotting.scatter_plot_signals(X_whiten)
 
-plotter.show()
+
+# plotter.show()
