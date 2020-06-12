@@ -43,7 +43,7 @@ X = np.zeros((2, num_samples))
 X[0] = x1
 X[1] = x2
 num_sig = X.shape[0]
-print("\nSize of X: ", X.shape)
+# print("\nSize of X: ", X.shape)
 
 # plot raw audio signals:
 plotting.plot_signals(X, sample_freq_1)
@@ -54,15 +54,14 @@ plotting.scatter_plot_signals(X)
 # --------------------ICA ALGORITHM--------------------
 
 # number of iterations to run FastICA:
-num_iters = 100
+num_iters = 200
 
 # center data:
 X_center = ICA.center(X)
-# plotting.plot_signals(X_center, sample_freq_1)
 
 # whiten data:
 X_white = ICA.whiten(X_center)
-print("\nSize of X_whiten: ", X_white.shape)
+# print("\nSize of X_whiten: ", X_white.shape)
 # print("Mean of whitened data:")
 # print(np.mean(X_white, axis=1))
 # print("Variance of whitened data:")
@@ -74,12 +73,12 @@ print("\nSize of X_whiten: ", X_white.shape)
 
 # run FastICA algorithm:
 W = ICA.fastICA(X_white, num_sources=num_sig, num_iters=num_iters)
-print("\nSize of W: ", W.shape)
+print("\nW: ")
 print(W)
 
 # recover source signals:
 S = ICA.recover_sources(X_white, W, X)
-print("\nSize of S: ", S.shape)
+# print("\nSize of S: ", S.shape)
 # plot estimated source signals:
 plotting.plot_signals(S, sample_freq_1)
 # create a scatter plot of estimated source signals:
@@ -90,7 +89,7 @@ plotting.scatter_plot_signals(S)
 transformer = FastICA(n_components=2, random_state=0)
 S = transformer.fit_transform(X.T)
 S = S.T
-print(S.shape)
+# print("\nSize of S: ", S.shape)
 plotting.plot_signals(S, sample_freq_1)
 plotting.scatter_plot_signals(S)
 """
