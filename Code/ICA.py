@@ -83,7 +83,6 @@ def fastICA(X, num_sources=None, num_iters=100):
     W = np.zeros((num_sig, num_sources))
 
     for source in range(num_sources):
-        print("source {0}:".format(source))
         # randomly initialize weight vector:
         w = np.random.randn(num_sig, 1)
 
@@ -91,7 +90,6 @@ def fastICA(X, num_sources=None, num_iters=100):
             w = (1 / num_samples) * np.matmul(X, np.tanh(np.matmul(w.T, X)).T) -\
                 (1 / num_samples) * np.sum((1 - np.square(np.tanh(np.matmul(w.T, X))))) * w
             for k in range(source):
-                print("k = {0}".format(k))
                 w = w - np.dot(np.squeeze(w), W[:, k]) * np.reshape(W[:, k], (num_sig, 1))
             w = w / linalg.norm(w)
 
