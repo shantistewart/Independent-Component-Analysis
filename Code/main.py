@@ -4,6 +4,7 @@
 import numpy as np
 import matplotlib.pyplot as plotter
 import scipy.io.wavfile
+from sklearn.decomposition import FastICA
 from Code import ICA, plotting_functions as plotting
 
 print("\n")
@@ -49,11 +50,11 @@ plotting.scatter_plot_signals(X)
 num_iters = 100
 
 # center data:
-X = ICA.center(X)
-# plotting.plot_signals(X, sample_freq_1)
+X_center = ICA.center(X)
+# plotting.plot_signals(X_center, sample_freq_1)
 
 # whiten data:
-X_whiten = ICA.whiten(X)
+X_whiten = ICA.whiten(X_center)
 print("\nSize of X_whiten: ", X_whiten.shape)
 # print("Mean of whitened data:")
 # print(np.mean(X_whiten, axis=1))
@@ -61,16 +62,34 @@ print("\nSize of X_whiten: ", X_whiten.shape)
 # print(np.var(X_whiten, axis=1))
 # print()
 # plot whitened signals:
-plotting.plot_signals(X_whiten, sample_freq_1)
+# plotting.plot_signals(X_whiten, sample_freq_1)
 # create a scatter plot of whitened signals:
-plotting.scatter_plot_signals(X_whiten)
+# plotting.scatter_plot_signals(X_whiten)
 
 # run FastICA algorithm:
-W = ICA.fastICA(X, num_sources=num_sig, num_iters=num_iters)
+W = ICA.fastICA(X_whiten, num_sources=num_sig, num_iters=num_iters)
 print("\nSize of W: ", W.shape)
 print(W)
 
+# recover source signals:
+S = ICA.recover_sources(X_whiten, W)
+print("\nSize of S: ", S.shape)
+# plot estimated source signals:
+plotting.plot_signals(S, sample_freq_1)
+# create a scatter plot of estimated source signals:
+plotting.scatter_plot_signals(S)
 
-# plotter.show()
+"""
+# sklearn's implementation to verify against:
+transformer = FastICA(n_components=2, random_state=0)
+S = transformer.fit_transform(X.T)
+S = S.T
+print(S.shape)
+plotting.plot_signals(S, sample_freq_1)
+plotting.scatter_plot_signals(S)
+"""
+
+
+plotter.show()
 
 print("\n\nDone!\n")

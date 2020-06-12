@@ -24,7 +24,7 @@ def center(X):
 #   X = (centered) data
 #       size: (num_sig, num_samples)
 # Outputs:
-#   X = whitened data
+#   X_whiten = whitened data
 #       size: (num_sig, num_samples)
 def whiten(X):
     num_sig = X.shape[0]
@@ -34,7 +34,9 @@ def whiten(X):
 
     # compute eigendecomposition of covariance matrix:
     eigval, eigvec = linalg.eigh(covariance)
-    E = np.real(eigvec)
+    eigval = np.flip(eigval)
+    E = np.flip(eigvec, axis=1)
+    E = np.real(E)
     # print("\n")
     # print('Eigenvalues: ', eigval)
     # print("Eigenvectors:")
@@ -97,3 +99,18 @@ def fastICA(X, num_sources=None, num_iters=100):
         W[:, source] = np.squeeze(w)
 
     return W
+
+
+# Function description: recovers sources with unmixing matrix.
+# Inputs:
+#   X = (un-centered) raw data
+#       size: (num_sig, num_samples)
+#   W = unmixing matrix
+#       size: (num_sig, num_sources)
+# Outputs:
+#   S = sources
+#       size: (num_sources, num_samples)
+def recover_sources(X, W):
+    S = np.matmul(W.T, X)
+
+    return S
