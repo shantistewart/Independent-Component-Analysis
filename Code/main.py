@@ -61,6 +61,8 @@ print(X_whiten.shape)
 # print("Variance of whitened data:")
 # print(np.var(X_whiten, axis=1))
 # print()
+# plot whitened signals:
+plotting.plot_signals(X_whiten, sample_freq_1)
 # create a scatter plot of whitened signals:
 plotting.scatter_plot_signals(X_whiten)
 
