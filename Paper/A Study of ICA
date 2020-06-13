@@ -36,6 +36,7 @@ independent component analysis, ICA, whitening, FastICA
 \end{IEEEkeywords}
 
 
+
 \section{Introduction}
 
 To motivate the topic of independent component analysis (ICA), let us consider a well-known problem in audio signal processing known as the \textit{cocktail party problem}. The setup of the problem is as follows. There is a person, a radio, and two microphones in a single room, and neither the person, radio, nor microphones are moving relative to each other. The person is talking and the radio is playing music simultaneously, and the two microphones are constantly recording. Let us denote the audio source signals of the person (speech) and the radio (music) as $ s_1(t) $ and $ s_2(t) $, and the recorded audio signals of the two microphones as $ x_1(t) $ and $ x_2(t) $. This setup is illustrated in Fig. \ref{cocktail_fig}.
@@ -58,6 +59,7 @@ The goal of this problem is to recover the source signals $ s_1(t) $ and $ s_2(t
 \caption{Illustration of the \textit{cocktail party problem} with a person talking, a radio playing music, and two microphones recording.}
 \label{cocktail_fig}
 \end{figure}
+
 
 
 \section{Problem Formulation}
@@ -214,6 +216,33 @@ In this algorithm $ \boldsymbol{B} $ is equivalent to the transpose of the final
 
 \section{Application: Audio Source Separation}
 
+This section details the results of applying the FastICA algorithm to audio source separation.
+
+\subsection{Data Sets}
+
+FastICA was applied to three different sets of audio files \cite{audio_files}, each with two recordings (microphones) and two desired sources and a sampling frequency of 16 kHz. The first set of audio files is a recording of two different people simultaneously counting from one to ten (in two different languages), the second set is a recording of one person counting from one to ten while music is playing in the background, and the third set is a recording of two people talking (not counting) simultaneously with some light background noise. Out of the three sets of audio files, the FastICA algorithm seemed to perform the best on the second set (counting and music), so the following results will be for this set of recordings.
+
+\begin{figure*}[htbp]
+\centerline{ \includegraphics[width=2.0\columnwidth]{X_plot.png}}
+\caption{Plot of the observed audio signals $ x_1(t) $ and $ x_2(t) $ in the time domain.}
+\label{X_plot}
+\end{figure*}
+\begin{figure*}[htbp]
+\centerline{ \includegraphics[width=2.0\columnwidth]{S_plot.png}}
+\caption{Plot of the estimated source audio signals $ s_1(t) $ and $ s_2(t) $ in the time domain.}
+\label{S_plot}
+\end{figure*}
+\begin{figure*}[htbp]
+\centerline{ \includegraphics[width=2.0\columnwidth]{X_scatter.png}}
+\caption{Scatter plot of the observed audio signals $ x_1 $ and $ x_2 $.}
+\label{X_scatter}
+\end{figure*}
+\begin{figure*}[htbp]
+\centerline{ \includegraphics[width=2.0\columnwidth]{S_scatter.png}}
+\caption{Scatter plot of the estimated source audio signals $ s_1 $ and $ s_2 $.}
+\label{S_scatter}
+\end{figure*}
+
 
 \section{Ease of Use}
 
@@ -268,6 +297,7 @@ citation first, followed by the original foreign-language citation \cite{b6}.
 \bibitem{ICA_algorithms} A. Hyvärinen and E. Oja, “Independent Component Analysis: Algorithms and Applications,” Neural Networks, vol. 13, no. 4-5, pp. 411–430, 2000.
 \bibitem{FastICA} A. Hyvarinen, “Fast and Robust Fixed-Point Algorithms for Independent Component Analysis,” IEEE Transactions on Neural Networks, vol. 10, no. 3, pp. 626–634, 1999.
 \bibitem{ICA_tutorial} J. Shlens, “A Tutorial on Independent Component Analysis,” arxiv, 14-Apr-2014. [Online]. Available: https://arxiv.org/pdf/1404.2986.pdf.
+\bibitem{audio_files} “Blind Source Separation of Recorded Speech and Music Signals,” Blind Source Separation: Audio Examples. [Online]. Available: https://cnl.salk.edu/~tewon/Blind/blind_audio.html.
 
 \end{thebibliography}
 
