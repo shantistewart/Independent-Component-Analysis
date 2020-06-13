@@ -27,13 +27,11 @@ stewars2@oregonstate.edu}
 
 
 \begin{abstract}
-This document is a model and instructions for \LaTeX.
-This and the IEEEtran.cls file define the components of your paper [title, text, heads, etc.]. *CRITICAL: Do Not Use Symbols, Special Characters, Footnotes,
-or Math in Paper Title or Abstract.
+Independent Component Analysis (ICA) is a widely used data analysis technique applicable to a broad range of fields including audio signal processing, image processing, biosignal processing, and machine learning. The aim of this paper is to provide a general introduction to the theory and methods of ICA, as well as a popular and efficient ICA algorithm known as FastICA. Additionally, an example of applying FastICA to audio source separation is presented.
 \end{abstract}
 
 \begin{IEEEkeywords}
-independent component analysis, ICA, whitening, FastICA
+independent component analysis, ICA, FastICA, whitening
 \end{IEEEkeywords}
 
 
@@ -225,15 +223,31 @@ FastICA was applied to three different sets of audio files \cite{audio_files}, e
 
 \subsection{Methods}
 
-The version of (multiple-unit) FastICA described in the previous section (Section III B)
+The version of (multiple-unit) FastICA described in the previous section (Section II III B) was used, with contrast functions $ g(u) = tanh(u) \text{ and } g'(u) = 1 - tanh^2(u) $. Additionally, a set number of iterations (set to 100) was used for the inner loop of the algorithm, as opposed to a convergence test, for simplicity of implementation. After applying FastICA to the data, an estimate of the mean and variance was added back in to the estimated source signals. The mean of the original (uncentered) data was close to zero, so adding the mean back in did not make much of a difference. However, it was essential to add the variance back in to hear the estimated source signals (in the .WAV format, the volume of the audio depends on the magnitude of the signal values).
 
 \subsection{Results}
 
-Out of the three sets of audio files, the FastICA algorithm seemed to perform the best on the second set (counting and music), so the following results will be for this set of recordings. Since the medium of the data is audio, the best evaluation is to actually listen to the results: the audio output files (in .WAV format) can be found at \url{https://github.com/shantistewart/Independent-Component-Analysis/tree/master/Code}.
+Out of the three sets of audio files, the FastICA algorithm seemed to perform the best on the second set (counting and music), so the following results will be for this set of recordings.
 
-In addition to an auditory evaluation, we can visually evaluate the results of the algorithm. Fig.~\ref{X_plot} shows a plot of the observed audio signals $ x_1(t) $ and $ x_2(t) $ in the time domain. It can be seen that the counting (from one to ten) is more apparent in the first recording $ x_1(t) $, from the roughly periodic spikes in signal value. This reflects the fact that microphone 1 is closer to the person counting, as was mentioned in the introduction section. After applying FastICA to $ x_1(t) $ and $ x_2(t) $, the estimated source audio signals are displayed in Fig.~\ref{S_plot}. One can readily see that source $ s_1(t) $ contains more information of counting than music, as can be heard in the output audio files. Additionally, the magnitude of $ s_1(t) $ is much smaller than the magnitude of $ s_2(t) $, which exemplifies one of the shortcomings of ICA.
+We can visually evaluate the results of the algorithm with simple time-domain plots. Fig.~\ref{X_plot} shows a plot of the observed audio signals $ x_1(t) $ and $ x_2(t) $ in the time domain. It can be seen that the counting (from one to ten) is more apparent in the first recording $ x_1(t) $, from the roughly periodic spikes in signal value. This reflects the fact that microphone 1 is closer to the person counting, as was mentioned in the introduction section. After applying FastICA to $ x_1(t) $ and $ x_2(t) $, the estimated source audio signals are displayed in Fig.~\ref{S_plot}. One can readily see that source $ s_1(t) $ contains more information of counting than music, as can be heard in the output audio files. Additionally, the magnitude of $ s_1(t) $ is much smaller than the magnitude of $ s_2(t) $, which exemplifies one of the shortcomings of ICA.
 
-Another way to visually evaluate the results is to examine the scatter plots of the data and estimated sources (this is only possible because the data is 2-dimensional).
+Another way to visually evaluate the results is to examine the scatter plots of the data and estimated sources (clearly, this is possible only with 2-dimensional data). Looking at Fig.~\ref{X_scatter}, we can see that $ x_1 $ and $ x_2 $ are fairly strongly correlated; this is expected, because when a sound (from either source) increase or decreases, both microphones will reflect this change in volume somewhat similarly (since neither microphone is extremely close or far away from either source). Examining the scatter plot of the estimated sources in Fig.~\ref{S_scatter}, we can see evidence of the whitening step in ICA since no one direction has significantly more variance than the others.
+
+Since the medium of the data is audio, the best evaluation is to actually listen to the results: the audio output files (in .WAV format) can be found at \url{https://github.com/shantistewart/Independent-Component-Analysis/tree/master/Code}. As can be heard, $ s_1(t) $ contains noticeably more sound of counting than music, although the total volume is much quieter than the other audio files. And as expected, $ s_2(t) $ contains more sound of music than counting.
+
+Clearly, these results are far from perfect: each estimated source is significantly contaminated with the other. However, this problem of blind source separation is inherently difficult, and the fact that a linear transformation of the data can partly recover the source is quite remarkable.
+
+
+
+\begin{thebibliography}{00}
+
+\bibitem{ICA_algorithms} A. Hyvärinen and E. Oja, “Independent Component Analysis: Algorithms and Applications,” Neural Networks, vol. 13, no. 4-5, pp. 411–430, 2000.
+\bibitem{FastICA} A. Hyvarinen, “Fast and Robust Fixed-Point Algorithms for Independent Component Analysis,” IEEE Transactions on Neural Networks, vol. 10, no. 3, pp. 626–634, 1999.
+\bibitem{ICA_tutorial} J. Shlens, “A Tutorial on Independent Component Analysis,” arxiv, 14-Apr-2014. [Online]. Available: https://arxiv.org/pdf/1404.2986.pdf.
+\bibitem{audio_files} “Blind Source Separation of Recorded Speech and Music Signals,” Blind Source Separation: Audio Examples. [Online]. Available: https://cnl.salk.edu/~tewon/Blind/blind_audio.html.
+
+\end{thebibliography}
+
 
 
 \begin{figure*}[htbp]
@@ -259,13 +273,5 @@ Another way to visually evaluate the results is to examine the scatter plots of 
 
 
 
-\begin{thebibliography}{00}
-
-\bibitem{ICA_algorithms} A. Hyvärinen and E. Oja, “Independent Component Analysis: Algorithms and Applications,” Neural Networks, vol. 13, no. 4-5, pp. 411–430, 2000.
-\bibitem{FastICA} A. Hyvarinen, “Fast and Robust Fixed-Point Algorithms for Independent Component Analysis,” IEEE Transactions on Neural Networks, vol. 10, no. 3, pp. 626–634, 1999.
-\bibitem{ICA_tutorial} J. Shlens, “A Tutorial on Independent Component Analysis,” arxiv, 14-Apr-2014. [Online]. Available: https://arxiv.org/pdf/1404.2986.pdf.
-\bibitem{audio_files} “Blind Source Separation of Recorded Speech and Music Signals,” Blind Source Separation: Audio Examples. [Online]. Available: https://cnl.salk.edu/~tewon/Blind/blind_audio.html.
-
-\end{thebibliography}
 
 \end{document}
