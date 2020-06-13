@@ -18,7 +18,7 @@ file_x2 = 'music_x2.wav'
 file_s1 = "music_s1.wav"
 file_s2 = "music_s2.wav"
 
-# """
+"""
 # play audio files:
 print("Playing", file_x1, "...")
 wave_obj = sa.WaveObject.from_wave_file(file_x1)
@@ -28,7 +28,7 @@ print("Playing", file_x2, "...")
 wave_obj = sa.WaveObject.from_wave_file(file_x2)
 play_obj = wave_obj.play()
 play_obj.wait_done()
-# """
+"""
 
 # load audio files:
 sample_freq_1, x1 = read(file_x1)

@@ -64,7 +64,7 @@ def whiten(X):
 #   num_iters = number of iterations to run algorithm
 # Outputs:
 #   V = final rotation matrix
-#       size: (num_sig, num_sources)
+#       size: (num_sources, num_sig)
 def fastICA(X, num_sources=None, num_iters=100):
     # dimensions of X:
     num_sig = X.shape[0]
@@ -74,22 +74,25 @@ def fastICA(X, num_sources=None, num_iters=100):
     if num_sources is None:
         num_sources = num_sig
 
-    # unmixing matrix:
-    V = np.zeros((num_sig, num_sources))
+    # transpose of final rotation matrix
+    B = np.zeros((num_sig, num_sources))
 
     for source in range(num_sources):
         # randomly initialize weight vector:
-        v = np.random.randn(num_sig, 1)
+        b = np.random.randn(num_sig, 1)
 
         for _ in range(num_iters):
-            v = (1 / num_samples) * np.matmul(X, np.tanh(np.matmul(v.T, X)).T) -\
-                (1 / num_samples) * np.sum((1 - np.square(np.tanh(np.matmul(v.T, X))))) * v
+            b = (1 / num_samples) * np.matmul(X, np.tanh(np.matmul(b.T, X)).T) -\
+                (1 / num_samples) * np.sum((1 - np.square(np.tanh(np.matmul(b.T, X))))) * b
             for k in range(source):
-                v = v - np.dot(np.squeeze(v), V[:, k]) * np.reshape(V[:, k], (num_sig, 1))
-            v = v / linalg.norm(v)
+                b = b - np.dot(np.squeeze(b), B[:, k]) * np.reshape(B[:, k], (num_sig, 1))
+            b = b / linalg.norm(b)
 
-        # save w:
-        V[:, source] = np.squeeze(v)
+        # save b:
+        B[:, source] = np.squeeze(b)
+
+    # final rotation matrix:
+    V = B.T
 
     return V
 
@@ -99,7 +102,7 @@ def fastICA(X, num_sources=None, num_iters=100):
 #   X_white = whitened data
 #       size: (num_sig, num_samples)
 #   V = final rotation matrix
-#       size: (num_sig, num_sig)
+#       size: (num_sources, num_sig)
 #   X = un-centered raw data
 #       size: (num_sig, num_samples)
 #   whiten_filter = whitening filter = D_sqrt_inv * E.T
@@ -109,7 +112,7 @@ def fastICA(X, num_sources=None, num_iters=100):
 #       size: (num_sources, num_samples)
 def recover_sources(X_white, V, X, whiten_filter):
     # project whitened data onto independent components:
-    S = np.matmul(V.T, X_white)
+    S = np.matmul(V, X_white)
 
     # compute unmixing matrix:
     W = np.matmul(V, whiten_filter)
