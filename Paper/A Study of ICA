@@ -120,7 +120,7 @@ Inspecting the covariance of the data (specifically, the auto-covariance matrix)
 \end{equation}
 where $ \overline{\boldsymbol{x}} $ is the sample mean of $ \boldsymbol{x} $.
 
-In order to determine $ \boldsymbol{\Sigma^{-1}} $ and $ \boldsymbol{U^T} $, we have to make an additional assumption that the sources $ \boldsymbol{s} $ are \textit{whitened}: $ \langle \boldsymbol{ss^T} \rangle = \boldsymbol{I} $. With this assumption, the ICA linear mixture model $ \boldsymbol{x} = \boldsymbol{As} $, and the SVD $ \boldsymbol{A} = \boldsymbol{U \Sigma V^T} $ the covariance matrix of $ \boldsymbol{x} $ can be expressed as:
+In order to determine $ \boldsymbol{\Sigma^{-1}} $ and $ \boldsymbol{U^T} $, we have to make an additional assumption that the sources $ \boldsymbol{s} $ are \textit{whitened}: $ \langle \boldsymbol{ss^T} \rangle = \boldsymbol{I} $. Using this assumption, the ICA linear mixture model $ \boldsymbol{x} = \boldsymbol{As} $, and the SVD $ \boldsymbol{A} = \boldsymbol{U \Sigma V^T} $, the covariance matrix of $ \boldsymbol{x} $ can be expressed as:
 \[
 \langle \boldsymbol{xx^T} \rangle = \langle (\boldsymbol{As}) (\boldsymbol{As})^{\boldsymbol{T}} \rangle
 \]
@@ -204,7 +204,7 @@ The multi-information can be written as a function of \textit{entropy}. The entr
 H(s_i) = - \int P(s_i) \log_2 \left( P(s_i) \right) ds_i
 \label{entropy}
 \end{equation}
-With a little manipulation, the multi-information can be written as a function of entropy:
+With a little manipulation, the multi-information can be written as:
 \begin{equation}
 I(\boldsymbol{s}) = \sum_{i=1}^{n} H(s_i) - H(\boldsymbol{s})
 \label{multi_information_entropy}
@@ -212,28 +212,28 @@ I(\boldsymbol{s}) = \sum_{i=1}^{n} H(s_i) - H(\boldsymbol{s})
 
 To simplify this expression further, let us substitute in $ \boldsymbol{\hat{s}} = \boldsymbol{V x_w} $:
 \[
-I(\boldsymbol{s}) = \sum_{i=1}^{n} H([\boldsymbol{Vx_w}]_i) - H([\boldsymbol{Vx_w}])
+I(\boldsymbol{s}) = \sum_{i=1}^{n} H([\boldsymbol{Vx_w}]_i) - H(\boldsymbol{Vx_w})
 \]
 \[
-I(\boldsymbol{s}) = \sum_{i=1}^{n} H([\boldsymbol{Vx_w}]_i) - \left( H([\boldsymbol{x_w}]) + \log_2 \left( det(\boldsymbol{V}) \right) \right)
+I(\boldsymbol{s}) = \sum_{i=1}^{n} H([\boldsymbol{Vx_w}]_i) - \left( H(\boldsymbol{x_w}) + \log_2 \left( det(\boldsymbol{V}) \right) \right)
 \]
 \begin{equation}
-I(\boldsymbol{s}) = \sum_{i=1}^{n} H([\boldsymbol{Vx_w}]_i) - H([\boldsymbol{x_w}])
+I(\boldsymbol{s}) = \sum_{i=1}^{n} H([\boldsymbol{Vx_w}]_i) - H(\boldsymbol{x_w})
 \label{multi_information_simplified}
 \end{equation}
 where we have utilized an expression that relates the entropy of a probability distribution that undergoes a linear transformation and the fact that the determinant of the rotation matrix $ \boldsymbol{V} $ equals 1.
 
-With \eqref{multi_information_entropy}, we can now write ICA as an optimization problem that finds the optimal rotation matrix $ \boldsymbol{V^*} $ that minimizes the multi-information of $ \boldsymbol{\hat{s}} $:
+With \eqref{multi_information_simplified}, we can now write ICA as an optimization problem that finds the optimal rotation matrix $ \boldsymbol{V^*} $ that minimizes the multi-information of $ \boldsymbol{\hat{s}} $:
 \begin{equation}
 \boldsymbol{V^*} = \argminl_{V} \sum_{i=1}^{n} H([\boldsymbol{Vx_w}]_i)
 \label{ICA_optimization}
 \end{equation}
-In practice, computing the entropy of a finite data set (i.e. a sampled probability distribution) is difficult and generally not robust to noise, so various approximations to entropy are used, as will be seen in the next section.
+In practice, computing the entropy of a finite data set (i.e. a sampled probability distribution) is difficult and generally not robust to noise, so various approximations of entropy are used, as will be seen in the next section.
 
 
 \section{FastICA Algorithm}
 
-The FastICA algorithm, developed by \textit{A. Hyvarinen} \cite{FastICA} at the Helsinki University of Technology, is a widely used algorithm for solving ICA with good efficiency and convergence properties. As with most ICA algorithms, FastICA searches for an orthogonal rotation matrix ($ \boldsymbol{V} $), such that the statistical independence of the projection of the whitened data onto this matrix is maximized. FastICA uses an approximation of negentropy to as a measure of statistical independence.
+The FastICA algorithm, developed by \textit{A. Hyvarinen} \cite{FastICA} at the Helsinki University of Technology, is a widely used algorithm for solving ICA with good efficiency and convergence properties. As with most ICA algorithms, FastICA searches for an orthogonal rotation matrix ($ \boldsymbol{V} $), such that the statistical independence of the projection of the whitened data onto this matrix is maximized. FastICA uses an approximation of negentropy as a measure of statistical independence.
 
 \subsection{Negentropy}
 
@@ -242,11 +242,11 @@ Before presenting the FastICA algorithm, we must first introduce the concept of 
 \boldsymbol{J(\boldsymbol{s})} = H(\boldsymbol{s_{gauss}}) - H(\boldsymbol{s})
 \label{negentropy}
 \end{equation}
-where $ \boldsymbol{s_{gauss}} $ is a Gaussian random vector of the same covariance matrix is $ \boldsymbol{s} $. As can be seen from \eqref{negentropy}, negentropy is a nonnegative quantity that reaches a minimum of zero if and only if $ \boldsymbol{s} $ is Gaussian. Negentropy is a measure of nongaussianity, since it takes on larger values for random vectors that are very different from their Gaussian equivalents (same covariance matrix) and is minimized when the random vector is Gaussian. The FastICA algorithm utilizes the fact that nongaussianity can be seen to be equivalent to statistical independence and uses an approximation to negentropy in its implementation.
+where $ \boldsymbol{s_{gauss}} $ is a Gaussian random vector of the same covariance matrix of $ \boldsymbol{s} $. As can be seen from \eqref{negentropy}, negentropy is a nonnegative quantity that reaches a minimum of zero if and only if $ \boldsymbol{s} $ is Gaussian. Negentropy is a measure of nongaussianity, since it takes on larger values for random vectors that are very different from their Gaussian equivalents (same covariance matrix) and is minimized when the random vector is Gaussian. The FastICA algorithm utilizes the fact that nongaussianity can be seen to be equivalent to statistical independence and uses an approximation of negentropy in its implementation.
 
 \subsection{FastICA for One Unit}
 
-The overall FastICA algorithm functions by finding the individual independent components separately (with a modification). The following is the FastICA algorithm for one unit (independent component):
+The overall FastICA algorithm works by finding the individual independent components separately (with an intermediate modification). The following is the FastICA algorithm for one unit (independent component):
 
 \begin{algorithmic}
 \STATE \textbf{Input}: $ \boldsymbol{x} \in \mathbb{R}^n $ = observed data
@@ -258,19 +258,19 @@ The overall FastICA algorithm functions by finding the individual independent co
 \ENDWHILE
 \end{algorithmic}
 
-The function $ g() $ and its derivative $ g'() $ is a hyperparameter to the algorithm, and can be experimented with to achieve better performance. \textit{A. Hyvarinen} \cite{FastICA} recommends the set of functions
+The function $ g() $ and its derivative $ g'() $ is a hyperparameter of the algorithm, and can be experimented with to achieve better performance. \textit{A. Hyvarinen} \cite{FastICA} recommends the set of functions
 \[
 g(u) = tanh(u) \text{ and } g'(u) = 1 - tanh^2(u)
 \]
-as for general-purpose applications, and states that the set of functions
+for general-purpose applications, and states that the set of functions
 \[
 g(u) = ue^{-u^2/2} \text{ and } g'(u) = (1 - u^2)e^{-u^2/2}
 \]
-are more robust.
+are typically more robust.
 
 \subsection{FastICA for Multiple Units}
 
-The one-unit algorithm outlined in the previous subsection clearly cannot simply be used in series to find all of the desired independent components, because the weight vector $ \boldsymbol{b} $ would likely converge to the same independent component every time. To prevent different weight vectors from converging to the same value, the projected outputs $ \boldsymbol{b_1^Tx,...,b_n^Tx} $ must be decorrelated after every iteration. The following algorithm achieves this using a decorrelation that is very similar to the Gram-Schmidt procedure.
+The one-unit algorithm outlined in the previous subsection clearly cannot be used in series to find all of the desired independent components, because the weight vector $ \boldsymbol{b} $ would likely converge to the same independent component every time. To prevent different weight vectors from converging to the same value, the projected outputs $ \boldsymbol{b_1^Tx,...,b_n^Tx} $ must be decorrelated after every iteration. The following algorithm achieves this using a decorrelation method that is very similar to the Gram-Schmidt procedure.
 
 \begin{algorithmic}
 \STATE \textbf{Inputs}: $ \boldsymbol{x} \in \mathbb{R}^n $ = observed data, $ c $ = number of desired independent components
@@ -278,7 +278,7 @@ The one-unit algorithm outlined in the previous subsection clearly cannot simply
 \FOR{k = 1 to c}
 \STATE $ \boldsymbol{b_k} \gets $ random vector of length $ n $
 \WHILE{$ \boldsymbol{b_k} $ is not converged}
-\STATE $ \boldsymbol{b_k} \gets \langle \boldsymbol{x} g(\boldsymbol{b_k^T x}) \rangle - \langle g'(\boldsymbol{b+k^T x}) \rangle \boldsymbol{b_k} $
+\STATE $ \boldsymbol{b_k} \gets \langle \boldsymbol{x} g(\boldsymbol{b_k^T x}) \rangle - \langle g'(\boldsymbol{b_k^T x}) \rangle \boldsymbol{b_k} $
 \STATE $ \boldsymbol{b_k} \gets \boldsymbol{b_k} - \sum_{j=1}^{k-1} (\boldsymbol{b_k^T b_j}) \boldsymbol{b_j} $
 \STATE $ \boldsymbol{b_k} \gets \boldsymbol{b_k} $ / $ \|\boldsymbol{b_k}\| $
 \ENDWHILE
@@ -292,7 +292,7 @@ In this algorithm $ \boldsymbol{B} $ is equivalent to the transpose of the final
 
 \section{Application: Audio Source Separation}
 
-This section details the results of applying the FastICA algorithm to audio source separation.
+This section details the results of applying the FastICA algorithm to a simple audio source separation example.
 
 \subsection{Data Sets}
 
