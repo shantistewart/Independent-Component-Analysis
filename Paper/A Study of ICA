@@ -162,6 +162,10 @@ where $ \boldsymbol{D} $ and $ \boldsymbol{E} $ are the eigenvalues and eigenvec
 
 \subsection{Measures of Statistical Independence}
 
+To determine the final unknown rotation matrix $ \boldsymbol{V} $, we must exploit one of our key assumptions behind ICA: each source $ s_i $ is \textit{statistically independent} from the other sources.
+
+% \subsection{Definition of Statistical Independence}
+
 
 \section{FastICA Algorithm}
 
@@ -233,7 +237,7 @@ We can visually evaluate the results of the algorithm with simple time-domain pl
 
 Another way to visually evaluate the results is to examine the scatter plots of the data and estimated sources (clearly, this is possible only with 2-dimensional data). Looking at Fig.~\ref{X_scatter}, we can see that $ x_1 $ and $ x_2 $ are fairly strongly correlated; this is expected, because when a sound (from either source) increase or decreases, both microphones will reflect this change in volume somewhat similarly (since neither microphone is extremely close or far away from either source). Examining the scatter plot of the estimated sources in Fig.~\ref{S_scatter}, we can see evidence of the whitening step in ICA since no one direction has significantly more variance than the others.
 
-Since the medium of the data is audio, the best evaluation is to actually listen to the results: the audio output files (in .WAV format) can be found at \url{https://github.com/shantistewart/Independent-Component-Analysis/tree/master/Code}. (The audio files for this example are named "music\_x1.wav", "music\_x2.wav", "music\_s1.wav", "music\_s1.wav", where "x" represents the observed signals and "s" represents the estimated source signals.) As can be heard, $ s_1(t) $ contains noticeably more sound of counting than music, although the total volume is much quieter than the other audio files. And as expected, $ s_2(t) $ contains more sound of music than counting.
+Since the medium of the data is audio, the best evaluation is to actually listen to the results: the audio output files (in .WAV format) can be found at \url{https://github.com/shantistewart/Independent-Component-Analysis/tree/master/Code}\footnote{The audio files for this example are named "music\_x1.wav", "music\_x2.wav", "music\_s1.wav", "music\_s1.wav", where "x" represents the observed signals and "s" represents the estimated source signals.} As can be heard, $ s_1(t) $ contains noticeably more sound of counting than music, although the total volume is much quieter than the other audio files. And as expected, $ s_2(t) $ contains more sound of music than counting.
 
 Clearly, these results are far from perfect: each estimated source is significantly contaminated with the other. However, this problem of blind source separation is inherently difficult, and the fact that a linear transformation of the data can partly recover the source is quite remarkable.
 
