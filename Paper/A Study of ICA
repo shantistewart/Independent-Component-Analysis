@@ -10,6 +10,10 @@
 \usepackage{textcomp}
 \usepackage{xcolor}
 \usepackage{hyperref}
+\DeclareMathOperator*{\argmin}{argmin}
+\DeclareMathOperator*{\argmax}{argmax}
+\newcommand*{\argminl}{\argmin\limits}
+\newcommand*{\argmaxl}{\argmax\limits}
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 \begin{document}
@@ -158,18 +162,87 @@ Looking back at \eqref{W_SVD}, the unmixing matrix $ \boldsymbol{W} $ can now be
 \boldsymbol{W} = \boldsymbol{V D^{-1/2} E^T}
 \label{W_expression}
 \end{equation}
-where $ \boldsymbol{D} $ and $ \boldsymbol{E} $ are the eigenvalues and eigenvectors of the covariance matrix of the data, respectively. The matrix product $ \boldsymbol{D^{-1/2}E^T} $ is known as a \textit{whitening filter}, because it \textit{whitens} the data. Now the only unknown component of the unmixing matrix $ \boldsymbol{W} $ is an orthogonal matrix $ \boldsymbol{V} $, which is addressed in the upcoming subsections.
+where $ \boldsymbol{D} $ and $ \boldsymbol{E} $ are the eigenvalues and eigenvectors of the covariance matrix of the data, respectively.
+
+\subsubsection{Relationship to Whitening}
+
+The matrix product $ \boldsymbol{D^{-1/2}E^T} $ is known as a \textit{whitening filter}, because it \textit{whitens} the data. Whitening is a common technique in signal processing that first rotates the data to align with its orthogonal directions of maximum variance (eigenvectors of the covariance matrix), and then normalizes each axis direction to be of unit variance. Examining \eqref{source_estimation} and \eqref{W_expression}, the estimation of the sources can be written as:
+\begin{equation}
+\boldsymbol{\hat{s}} = \boldsymbol{V D^{-1/2} E^T x} = \boldsymbol{V x_w}
+\label{source_estimation_whitening}
+\end{equation}
+where $ \boldsymbol{x_w} $ is a whitened version of the (centered) data $ \boldsymbol{x} $.
+
+Now the only unknown component of the unmixing matrix $ \boldsymbol{W} $ is an orthogonal matrix $ \boldsymbol{V} $, which is addressed in the upcoming subsections.
 
 \subsection{Measures of Statistical Independence}
 
 To determine the final unknown rotation matrix $ \boldsymbol{V} $, we must exploit one of our key assumptions behind ICA: each source $ s_i $ is \textit{statistically independent} from the other sources.
 
-% \subsection{Definition of Statistical Independence}
+\subsubsection{Definition of Statistical Independence}
+
+Statistical independence is the strongest criterion of independence between random variables. It dictates that second-order and all higher-order correlations between the random variables to be zero. In comparison, uncorrelatedness requires only second-order correlations to be zero. Covariance matrices only capture second-order correlations (i.e. linear dependencies) between random variables, and therefore can only be used to manipulate second-order correlations. In the previous subsection, whitening the data  $ \boldsymbol{x} $ only removes second-order correlations, but does not remove higher-order correlations. From probability theory, a random vector $ \boldsymbol{s} = [\boldsymbol{s_1},...,\boldsymbol{s_n}]^T \in \mathbb{R}^{n} $ is statistically independent if and only if:
+\begin{equation}
+P(\boldsymbol{s}) = \prod_{i=1}^{n} P(\boldsymbol{s_i})
+\label{independence}
+\end{equation}
+where $ P(\boldsymbol{s}) $ is the joint probability density of $ \boldsymbol{s} $. In words, $ \boldsymbol{s} $ is statistically independent if and only if its joint probability density can be factored as a product of the individual probability densities of its elements $ \boldsymbol{s_i} $.
+
+\subsubsection{Multi-Information and Entropy}
+
+In order to minimize the statistical independence of the sources $ \boldsymbol{s_i} $, we need some measure of statistical dependence/independence. A natural measure from the branch of mathematics known as information theory is called the multi-information, which is defined as:
+\begin{equation}
+I(\boldsymbol{s}) = \int P(\boldsymbol{s}) \log_2 \left( \frac{P(\boldsymbol{s})}{\prod_{i=1}^{n} P(\boldsymbol{s_i})} \right) d\boldsymbol{s}
+\label{multi_information}
+\end{equation}
+The multi-information is a measure of statistical \textit{dependence}, meaning that it has larger values for higher statistical dependencies. The multi-information is always nonnegative and achieves a minimum of zero when $ \boldsymbol{s} $ is completely statistically independent. (This is readily apparent by the fact that the argument of the $ log $ equals 1 when complete statistical independence exists.)
+
+The final step of ICA can now be expressed concisely: determine a rotation matrix $ \boldsymbol{V} $ that minimizes the multi-information of $ \boldsymbol{\hat{s}} $, where $ \boldsymbol{\hat{s}} = \boldsymbol{V x_w} $ and $ \boldsymbol{x_w} $ is a whitened version of the (centered) data $ \boldsymbol{x} $. Finding a rotation matrix that singlehandedly removes all higher-order correlations seems like a formidable task, but if the ICA assumptions are correct, then it is achievable.
+
+The multi-information can be written as a function of \textit{entropy}. The entropy of a probability distribution is a measure of its uncertainty and is defined as:
+\begin{equation}
+H(s_i) = - \int P(s_i) \log_2 \left( P(s_i) \right) ds_i
+\label{entropy}
+\end{equation}
+With a little manipulation, the multi-information can be written as a function of entropy:
+\begin{equation}
+I(\boldsymbol{s}) = \sum_{i=1}^{n} H(s_i) - H(\boldsymbol{s})
+\label{multi_information_entropy}
+\end{equation}
+
+To simplify this expression further, let us substitute in $ \boldsymbol{\hat{s}} = \boldsymbol{V x_w} $:
+\[
+I(\boldsymbol{s}) = \sum_{i=1}^{n} H([\boldsymbol{Vx_w}]_i) - H([\boldsymbol{Vx_w}])
+\]
+\[
+I(\boldsymbol{s}) = \sum_{i=1}^{n} H([\boldsymbol{Vx_w}]_i) - \left( H([\boldsymbol{x_w}]) + \log_2 \left( det(\boldsymbol{V}) \right) \right)
+\]
+\begin{equation}
+I(\boldsymbol{s}) = \sum_{i=1}^{n} H([\boldsymbol{Vx_w}]_i) - H([\boldsymbol{x_w}])
+\label{multi_information_simplified}
+\end{equation}
+where we have utilized an expression that relates the entropy of a probability distribution that undergoes a linear transformation and the fact that the determinant of the rotation matrix $ \boldsymbol{V} $ equals 1.
+
+With \eqref{multi_information_entropy}, we can now write ICA as an optimization problem that finds the optimal rotation matrix $ \boldsymbol{V^*} $ that minimizes the multi-information of $ \boldsymbol{\hat{s}} $:
+\begin{equation}
+\boldsymbol{V^*} = \argminl_{V} \sum_{i=1}^{n} H([\boldsymbol{Vx_w}]_i)
+\label{ICA_optimization}
+\end{equation}
+In practice, computing the entropy of a finite data set (i.e. a sampled probability distribution) is difficult and generally not robust to noise, so various approximations to entropy are used, as will be seen in the next section.
 
 
 \section{FastICA Algorithm}
 
-The FastICA algorithm, developed by \textit{A. Hyvarinen} \cite{FastICA} at the Helsinki University of Technology, is a widely used algorithm for solving ICA with good efficiency and convergence properties. As with most ICA algorithms, FastICA searches for an orthogonal rotation matrix ($ \boldsymbol{V} $), such that non-gaussianity of the projection of the whitened data onto this matrix is maximized. FastICA uses an approximation of negentropy to as a measure of non-gaussianity.
+The FastICA algorithm, developed by \textit{A. Hyvarinen} \cite{FastICA} at the Helsinki University of Technology, is a widely used algorithm for solving ICA with good efficiency and convergence properties. As with most ICA algorithms, FastICA searches for an orthogonal rotation matrix ($ \boldsymbol{V} $), such that the statistical independence of the projection of the whitened data onto this matrix is maximized. FastICA uses an approximation of negentropy to as a measure of statistical independence.
+
+\subsection{Negentropy}
+
+Before presenting the FastICA algorithm, we must first introduce the concept of negentropy. Negentropy is defined as:
+\begin{equation}
+\boldsymbol{J(\boldsymbol{s})} = H(\boldsymbol{s_{gauss}}) - H(\boldsymbol{s})
+\label{negentropy}
+\end{equation}
+where $ \boldsymbol{s_{gauss}} $ is a Gaussian random vector of the same covariance matrix is $ \boldsymbol{s} $. As can be seen from \eqref{negentropy}, negentropy is a nonnegative quantity that reaches a minimum of zero if and only if $ \boldsymbol{s} $ is Gaussian. Negentropy is a measure of nongaussianity, since it takes on larger values for random vectors that are very different from their Gaussian equivalents (same covariance matrix) and is minimized when the random vector is Gaussian. The FastICA algorithm utilizes the fact that nongaussianity can be seen to be equivalent to statistical independence and uses an approximation to negentropy in its implementation.
 
 \subsection{FastICA for One Unit}
 
@@ -181,7 +254,7 @@ The overall FastICA algorithm functions by finding the individual independent co
 \STATE $ \boldsymbol{b} \gets $ random vector of length $ n $
 \WHILE{$ \boldsymbol{b} $ is not converged}
 \STATE $ \boldsymbol{b} \gets \langle \boldsymbol{x} g(\boldsymbol{b^Tx}) \rangle - \langle g'(\boldsymbol{b^Tx}) \rangle \boldsymbol{b} $
-\STATE $ \boldsymbol{b} \gets \boldsymbol{b} $ / $ ||\boldsymbol{b}|| $
+\STATE $ \boldsymbol{b} \gets \boldsymbol{b} $ / $ \|\boldsymbol{b}\| $
 \ENDWHILE
 \end{algorithmic}
 
@@ -207,7 +280,7 @@ The one-unit algorithm outlined in the previous subsection clearly cannot simply
 \WHILE{$ \boldsymbol{b_k} $ is not converged}
 \STATE $ \boldsymbol{b_k} \gets \langle \boldsymbol{x} g(\boldsymbol{b_k^T x}) \rangle - \langle g'(\boldsymbol{b+k^T x}) \rangle \boldsymbol{b_k} $
 \STATE $ \boldsymbol{b_k} \gets \boldsymbol{b_k} - \sum_{j=1}^{k-1} (\boldsymbol{b_k^T b_j}) \boldsymbol{b_j} $
-\STATE $ \boldsymbol{b_k} \gets \boldsymbol{b_k} $ / $ ||\boldsymbol{b_k}|| $
+\STATE $ \boldsymbol{b_k} \gets \boldsymbol{b_k} $ / $ \|\boldsymbol{b_k}\| $
 \ENDWHILE
 \ENDFOR
 \STATE $ \boldsymbol{B} \gets [\boldsymbol{b_1},...,\boldsymbol{b_c}] $
@@ -248,7 +321,7 @@ Clearly, these results are far from perfect: each estimated source is significan
 \bibitem{ICA_algorithms} A. Hyvärinen and E. Oja, “Independent Component Analysis: Algorithms and Applications,” Neural Networks, vol. 13, no. 4-5, pp. 411–430, 2000.
 \bibitem{FastICA} A. Hyvarinen, “Fast and Robust Fixed-Point Algorithms for Independent Component Analysis,” IEEE Transactions on Neural Networks, vol. 10, no. 3, pp. 626–634, 1999.
 \bibitem{ICA_tutorial} J. Shlens, “A Tutorial on Independent Component Analysis,” arxiv, 14-Apr-2014. [Online]. Available: https://arxiv.org/pdf/1404.2986.pdf.
-\bibitem{audio_files} “Blind Source Separation of Recorded Speech and Music Signals,” Blind Source Separation: Audio Examples. [Online]. Available: https://cnl.salk.edu/~tewon/Blind/blind_audio.html.
+\bibitem{audio_files} “Blind Source Separation of Recorded Speech and Music Signals,” Blind Source Separation: Audio Examples. [Online]. Available: https://cnl.salk.edu/~tewon/Blind/blind\_audio.html.
 
 \end{thebibliography}
 
