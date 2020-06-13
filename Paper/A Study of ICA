@@ -73,7 +73,7 @@ There are two key assumptions behind the theory of ICA: 1) each source $ s_i $ i
 \boldsymbol{x} = \boldsymbol{As}
 \label{linear_mixture}
 \end{equation}
-where $ \boldsymbol{A} \in \mathbb{R}^{n \times n}$ is an unknown square matrix that "mixes" the sources. $ \boldsymbol{A} $ is known as the \textit{mixing matrix}. In this section, $ \boldsymbol{A} $ is assumed to be nonsingular.
+where $ \boldsymbol{A} \in \mathbb{R}^{n \times n} $ is an unknown square matrix that "mixes" the sources. $ \boldsymbol{A} $ is known as the \textit{mixing matrix}. In this section, $ \boldsymbol{A} $ is assumed to be nonsingular.
 
 The goal of ICA is to determine an \textit{unmixing} matrix $ \boldsymbol{W} \approx \boldsymbol{A^{-1}} $, which is an approximation of the inverse of $ \boldsymbol{A} $. The unmixing matrix can then be used to estimate the sources:
 \begin{equation}
@@ -166,6 +166,50 @@ where $ \boldsymbol{D} $ and $ \boldsymbol{E} $ are the eigenvalues and eigenvec
 
 The FastICA algorithm, developed by \textit{A. Hyvarinen} \cite{FastICA} at the Helsinki University of Technology, is a widely used algorithm for solving ICA with good efficiency and convergence properties. As with most ICA algorithms, FastICA searches for an orthogonal rotation matrix ($ \boldsymbol{V} $), such that non-gaussianity of the projection of the whitened data onto this matrix is maximized. FastICA uses an approximation of negentropy to as a measure of non-gaussianity.
 
+\subsection{FastICA for One Unit}
+
+The overall FastICA algorithm functions by finding the individual independent components separately (with a modification). The following is the FastICA algorithm for one unit (independent component):
+
+\begin{algorithmic}
+\STATE \textbf{Input}: $ \boldsymbol{x} \in \mathbb{R}^n $ = observed data
+\STATE \textbf{Output}: $ \boldsymbol{b} \in \mathbb{R}^n $ = independent component of data (weight vector)
+\STATE $ \boldsymbol{b} \gets $ random vector of length $ n $
+\WHILE{$ \boldsymbol{b} $ is not converged}
+\STATE $ \boldsymbol{b} \gets \langle \boldsymbol{x} g(\boldsymbol{b^Tx}) \rangle - \langle g'(\boldsymbol{b^Tx}) \rangle \boldsymbol{b} $
+\STATE $ \boldsymbol{b} \gets \boldsymbol{b} $ / $ ||\boldsymbol{b}|| $
+\ENDWHILE
+\end{algorithmic}
+
+The function $ g() $ and its derivative $ g'() $ is a hyperparameter to the algorithm, and can be experimented with to achieve better performance. \textit{A. Hyvarinen} \cite{FastICA} recommends the set of functions
+\[
+g(u) = tanh(u) \text{ and } g'(u) = 1 - tanh^2(u)
+\]
+as for general-purpose applications, and states that the set of functions
+\[
+g(u) = ue^{-u^2/2} \text{ and } g'(u) = (1 - u^2)e^{-u^2/2}
+\]
+are more robust.
+
+\subsection{FastICA for Multiple Units}
+
+The one-unit algorithm outlined in the previous subsection clearly cannot simply be used in series to find all of the desired independent components, because the weight vector $ \boldsymbol{b} $ would likely converge to the same independent component every time. To prevent different weight vectors from converging to the same value, the projected outputs $ \boldsymbol{b_1^Tx,...,b_n^Tx} $ must be decorrelated after every iteration. The following algorithm achieves this using a decorrelation that is very similar to the Gram-Schmidt procedure.
+
+\begin{algorithmic}
+\STATE \textbf{Inputs}: $ \boldsymbol{x} \in \mathbb{R}^n $ = observed data, $ c $ = number of desired independent components
+\STATE \textbf{Output}: $ \boldsymbol{s} \in \mathbb{R}^c $ = estimated sources (whitened)
+\FOR{k = 1 to c}
+\STATE $ \boldsymbol{b_k} \gets $ random vector of length $ n $
+\WHILE{$ \boldsymbol{b_k} $ is not converged}
+\STATE $ \boldsymbol{b_k} \gets \langle \boldsymbol{x} g(\boldsymbol{b_k^T x}) \rangle - \langle g'(\boldsymbol{b+k^T x}) \rangle \boldsymbol{b_k} $
+\STATE $ \boldsymbol{b_k} \gets \boldsymbol{b_k} - \sum_{j=1}^{k-1} (\boldsymbol{b_k^T b_j}) \boldsymbol{b_j} $
+\STATE $ \boldsymbol{b_k} \gets \boldsymbol{b_k} $ / $ ||\boldsymbol{b_k}|| $
+\ENDWHILE
+\ENDFOR
+\STATE $ \boldsymbol{B} \gets [\boldsymbol{b_1},...,\boldsymbol{b_c}] $
+\STATE $ \boldsymbol{s} \gets \boldsymbol{B^Tx} $
+\end{algorithmic}
+In this algorithm $ \boldsymbol{B} $ is equivalent to the transpose of the final rotation matrix $ \boldsymbol{V^T} $. Additionally, the output of the algorithm is a whitened version of the sources $ \boldsymbol{s} $.
+
 
 
 \section{Application: Audio Source Separation}
@@ -196,23 +240,6 @@ figures and tables may span across both columns. Figure captions should be
 below the figures; table heads should appear above the tables. Insert
 figures and tables after they are cited in the text. Use the abbreviation
 ``Fig.~\ref{fig}'', even at the beginning of a sentence.
-
-\begin{table}[htbp]
-\caption{Table Type Styles}
-\begin{center}
-\begin{tabular}{|c|c|c|c|}
-\hline
-\textbf{Table}&\multicolumn{3}{|c|}{\textbf{Table Column Head}} \\
-\cline{2-4}
-\textbf{Head} & \textbf{\textit{Table column subhead}}& \textbf{\textit{Subhead}}& \textbf{\textit{Subhead}} \\
-\hline
-copy& More table copy$^{\mathrm{a}}$& &  \\
-\hline
-\multicolumn{4}{l}{$^{\mathrm{a}}$Sample of a Table footnote.}
-\end{tabular}
-\label{tab1}
-\end{center}
-\end{table}
 
 
 \section*{References}
