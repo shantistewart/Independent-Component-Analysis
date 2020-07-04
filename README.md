@@ -19,37 +19,37 @@ University. The goals of this project were the following:
 ## Repository Structure
 
 * **Code:** _Python code to implement the FastICA algorithm._
-   * main.py
-   * ICA.py
-   * plotting_functions.py
-   * hard_speech_s1.wav
-   * hard_speech_s2.wav
-   * hard_speech_x1.wav
-   * hard_speech_x2.wav
-   * music_s1.wav
-   * music_s2.wav
-   * music_x1.wav
-   * music_x2.wav
-   * speech_s1.wav
-   * speech_s2.wav
-   * speech_x1.wav
-   * speech_x2.wav
+    * main.py
+    * ICA.py
+    * plotting_functions.py
+    * hard_speech_s1.wav
+    * hard_speech_s2.wav
+    * hard_speech_x1.wav
+    * hard_speech_x2.wav
+    * music_s1.wav
+    * music_s2.wav
+    * music_x1.wav
+    * music_x2.wav
+    * speech_s1.wav
+    * speech_s2.wav
+    * speech_x1.wav
+    * speech_x2.wav
 * **Paper:** _Research paper in pdf and Latex form._
-   * Research Paper.pdf
-   * **Latex:** _Latex document with IEEE template and referenced images._
-      * Research Paper (Latex)
-      * IEEEtran.cls
-      * Cocktail Party.png
-      * S_plot.png
-      * S_scatter.png
-      * X_plot.png
-      * X_scatter.png
+    * Research Paper.pdf
+    * **Latex:** _Latex document with IEEE template and referenced images._
+        * Research Paper (Latex)
+        * IEEEtran.cls
+        * Cocktail Party.png
+        * S_plot.png
+        * S_scatter.png
+        * X_plot.png
+        * X_scatter.png
 
 
 ## Author
 
 * **Shanti Stewart** -- B.S. student in Electrical and Computer Engineering at Oregon State University.
-   * [LinkedIn](https://www.linkedin.com/in/shanti-stewart-27aaaa183/)
-   * [GitHub](https://github.com/shantistewart)
+    * [LinkedIn](https://www.linkedin.com/in/shanti-stewart-27aaaa183/)
+    * [GitHub](https://github.com/shantistewart)
 
 
