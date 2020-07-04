@@ -5,7 +5,7 @@
 A class research project for Matrix Analysis for Machine Learning Signal Processing (ECE 599) at Oregon State
 University. The goals of this project were the following:
 1. Write a research paper about the mathematical theory and algorithms of independent component analysis (ICA).
-2. Implement the FastICA algorithm and applied it to a simple audio source separation example.
+2. Implement the FastICA algorithm and apply it to a simple audio source separation example.
 
 
 
