@@ -34,7 +34,7 @@ University. The goals of this project were the following:
     * speech_s2.wav
     * speech_x1.wav
     * speech_x2.wav
-* **Paper:** _Research paper in pdf and Latex form._
+* **Paper:** _Research paper (pdf) and Latex files and images to generate pdf._
     * Research Paper.pdf
     * **Latex:** _Latex document with IEEE template and referenced images._
         * Research Paper (Latex)
