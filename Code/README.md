@@ -1,5 +1,7 @@
 
-This folder contains several Python (.py) files and .wav files:
+
+This folder contains several Python (.py) files and audio (.wav) files:
+
 
 Python files:
 
