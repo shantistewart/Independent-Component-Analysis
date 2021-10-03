@@ -48,7 +48,7 @@ University. The goals of this project were the following:
 
 ## Author
 
-* **Shanti Stewart** -- B.S. student in Electrical and Computer Engineering at Oregon State University.
+* **Shanti Stewart** -- M.S. student in Machine Learning & Data Science at University of Southern California.
     * [LinkedIn](https://www.linkedin.com/in/shanti-stewart/)
     * [GitHub](https://github.com/shantistewart)
 
